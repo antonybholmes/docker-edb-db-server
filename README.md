@@ -70,3 +70,24 @@ sudo curl -SL \
 # Make executable
 
 sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+# Install postgres stuff
+
+sudo dnf update -y && sudo dnf install git -y
+
+ssh-keygen -t ed25519 -C "antony@antonyholmes.dev"
+cat ~/.ssh/id_ed25519.pub
+git clone git@github.com:antonybholmes/docker-edb-db-server.git
+
+# connecting pgadmin
+
+Look for docker ip address:
+ip route | grep docker0 -> 172.17.0.1
+
+### pgadmin
+
+Host 172.17.0.1
+Port 5433
+Maintenance database postgres
+Username postgres
+Password Your PostgreSQL password
