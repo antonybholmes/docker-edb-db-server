@@ -11,7 +11,7 @@ services:
     shm_size: 256mb
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     volumes:
-      - /data/postgres:/var/lib/postgresql
+      - ./data/postgres:/var/lib/postgresql
       - ./postgresql.conf:/etc/postgresql/postgresql.conf:ro
   pgadmin4:
     image: dpage/pgadmin4:latest
@@ -23,7 +23,7 @@ services:
     ports:
       - "127.0.0.1:5434:80"
     volumes:
-      - /data/pgadmin:/var/lib/pgadmin
+      - ./data/pgadmin:/var/lib/pgadmin
   edb-mail-server:
     container_name: edb-mail-server
     profiles:
@@ -38,4 +38,4 @@ services:
     env_file:
       - ./.env
     volumes:
-      - logs:/app/logs
+      - ./logs:/app/logs
