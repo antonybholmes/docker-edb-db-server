@@ -47,4 +47,5 @@ COPY --from=build-stage /app/version.json ./version.json
 
 # COPY .env /
 
-CMD BUILD=production ./edb-mail-server
+ENV BUILD=production
+CMD ["./edb-mail-server"]
