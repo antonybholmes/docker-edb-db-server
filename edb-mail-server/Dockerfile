@@ -3,8 +3,6 @@ FROM golang:1.27.4-trixie AS build-stage
 # RUN apk update
 # RUN apk add -U --no-cache ca-certificates && update-ca-certificates
 
-WORKDIR /
-
 RUN apt-get update && apt-get install -y openssh-client
 
 # so we can use ssh-keyscan to add github.com to known_hosts
@@ -19,17 +17,17 @@ RUN mkdir -p /root/.ssh && \
 
 # get the repositories we need
 RUN --mount=type=ssh \
-git clone git@github.com:antonybholmes/go-mail.git && \
 git clone git@github.com:antonybholmes/go-edb-mail-server.git && \
-git clone git@github.com:antonybholmes/go-web.git && \
+git clone git@github.com:antonybholmes/go-mail.git && \
+git clone git@github.com:antonybholmes/go-jobs.git && \
 git clone git@github.com:antonybholmes/go-sys.git
 
-WORKDIR /edb-mail-server
+WORKDIR /app
 
 RUN go mod tidy
 
 # build statically so runs without dependencies
-RUN CGO_ENABLED=1 GOOS=linux BUILD=production go build --tags "fts5" -o edbmailserver
+RUN CGO_ENABLED=1 GOOS=linux BUILD=production go build --tags "fts5" -o edb-mail-server
 
 # move app into smaller alpine image
 FROM debian:trixie-slim AS release-stage
@@ -40,13 +38,13 @@ WORKDIR /app
 # https://stackoverflow.com/questions/52969195/docker-container-running-golang-http-client-getting-error-certificate-signed-by
 COPY --from=build-stage /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-COPY --from=build-stage /edb-mail-server/edbmailserver edbmailserver
+COPY --from=build-stage /app/edb-mail-server edb-mail-server
 
 # aux files needed by app
-COPY --from=build-stage /edb-mail-server/templates/ ./templates/
-# COPY --from=build-stage /edb-mail-server/consts.env consts.env
-COPY --from=build-stage /edb-mail-server/version.json version.json
+COPY --from=build-stage /app/templates/ ./templates/
+# COPY --from=build-stage /app/consts.env consts.env
+COPY --from=build-stage /app/version.json version.json
 
 # COPY .env /
 
-CMD BUILD=production ./edbmailserver
+CMD BUILD=production ./edb-mail-server
