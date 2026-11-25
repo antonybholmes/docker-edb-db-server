@@ -29,14 +29,16 @@ echo "UUID=$UUID /data xfs defaults,nofail 0 2" | sudo tee -a /etc/fstab
 ### Make folders for storing data
 
 Run to ensure image can write to external store:
-
 sudo chown -R ec2-user:ec2-user /data
 sudo chmod 755 /data
 
-mkdir -p /data/postgres
-mkdir -p /data/pgadmin
-sudo chown 999:999 /data/postgres
-sudo chown -R 5050:5050 /data/pgadmin
+Symlink local folder to real data folder
+ln -s ./data /data
+
+mkdir -p ./data/postgres
+mkdir -p ./data/pgadmin
+sudo chown 999:999 ./data/postgres
+sudo chown -R 5050:5050 ./data/pgadmin
 
 ## Docker
 
@@ -84,8 +86,11 @@ git clone git@github.com:antonybholmes/docker-edb-db-server.git
 Look for docker ip address:
 ip route | grep docker0 -> 172.17.0.1
 
-### pgadmin
+### pgadmin connection to remote instance on dev system
 
+If using Docker need to bind remote db host to the local
+docker host which is 172.17.0.1 by default as Docker localhost
+is not aware of the host system
 Host 172.17.0.1
 Port 5433
 Maintenance database postgres

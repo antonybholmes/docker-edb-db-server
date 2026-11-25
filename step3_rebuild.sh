@@ -11,7 +11,7 @@ source .env
 set +o allexport
 
 # start postgres
-docker compose up -d --no-deps --build edb-pg-db
+docker compose up -d --no-deps --build edb-db
 #docker compose up -d --no-deps --build pgadmin4
 docker compose up -d --no-deps --build edb-mail-server
  

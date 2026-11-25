@@ -1,7 +1,7 @@
 services:
-  edb-pg-db:
+  edb-db:
     image: postgres:18.7-trixie
-    container_name: edb-pg-db
+    container_name: edb-db
     profiles:
       - prod
       - dev
